@@ -54,7 +54,7 @@ pipeline {
         stage('provision-infrastructure') {
             when {
                 anyOf {
-                    branch 'cf_test'
+                    branch 'main'
                 }
             }
             steps {
