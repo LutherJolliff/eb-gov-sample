@@ -73,7 +73,7 @@ pipeline {
         }
         stage('dev-deploy') {
             when {
-                branch 'cf_test'
+                branch 'main'
             }
             agent {
                 docker {
