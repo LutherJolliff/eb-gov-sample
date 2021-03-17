@@ -85,7 +85,7 @@ pipeline {
             }
             steps {
                 sh """
-                VERSION=$( date '+%F_%H:%M:%S' )
+                VERSION=\$( date '+%F_%H:%M:%S' )
                 zip -r ${BUILD_TAG}.zip .
                 aws s3 cp ./$BUILD_TAG.zip s3://$ARTIFACT_BUCKET/$TF_VAR_eb_app_name
                 aws elasticbeanstalk create-application-version --application-name $TF_VAR_eb_app_name --version-label v${BUILD_NUMBER}_${VERSION} --description=\"Built by Jenkins job $JOB_NAME\" --source-bundle S3Bucket=\"s3://$ARTIFACT_BUCKET/$TF_VAR_eb_app_name\",S3Key=\"${BUILD_TAG}.zip\" --region=us-gov-west-1"
