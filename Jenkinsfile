@@ -100,10 +100,12 @@ pipeline {
             }
             steps {
                 sh '''
-                    echo 'export PATH="/root/.ebcli-virtual-env/executables:$PATH"' >> ~/.bash_profile
-                    eb deploy staging
-                    sleep 5
-                    aws elasticbeanstalk describe-environments --environment-names staging --query "Environments[*].CNAME" --output text
+                    VERSION=$( date '+%F_%H:%M:%S' )
+                    zip -r ${BUILD_TAG}.zip .
+                    aws s3 cp ./$BUILD_TAG.zip s3://$ARTIFACT_BUCKET/$TF_VAR_eb_app_name/
+                    aws elasticbeanstalk create-application-version --application-name $TF_VAR_eb_app_name --version-label v${BUILD_NUMBER}_${VERSION} --description="Built by Jenkins job $JOB_NAME" --source-bundle S3Bucket="$ARTIFACT_BUCKET",S3Key="$TF_VAR_eb_app_name/${BUILD_TAG}.zip" --region=us-gov-west-1
+                    sleep 2
+                    aws elasticbeanstalk update-environment --application-name $TF_VAR_eb_app_name --environment-name staging --version-label v${BUILD_NUMBER}_${VERSION} --region=us-gov-west-1
                 '''
             }
         }
@@ -113,10 +115,12 @@ pipeline {
             }
             steps {
                 sh '''
-                    echo 'export PATH="/root/.ebcli-virtual-env/executables:$PATH"' >> ~/.bash_profile
-                    eb deploy production
-                    sleep 5
-                    aws elasticbeanstalk describe-environments --environment-names production --query "Environments[*].CNAME" --output text
+                    VERSION=$( date '+%F_%H:%M:%S' )
+                    zip -r ${BUILD_TAG}.zip .
+                    aws s3 cp ./$BUILD_TAG.zip s3://$ARTIFACT_BUCKET/$TF_VAR_eb_app_name/
+                    aws elasticbeanstalk create-application-version --application-name $TF_VAR_eb_app_name --version-label v${BUILD_NUMBER}_${VERSION} --description="Built by Jenkins job $JOB_NAME" --source-bundle S3Bucket="$ARTIFACT_BUCKET",S3Key="$TF_VAR_eb_app_name/${BUILD_TAG}.zip" --region=us-gov-west-1
+                    sleep 2
+                    aws elasticbeanstalk update-environment --application-name $TF_VAR_eb_app_name --environment-name production --version-label v${BUILD_NUMBER}_${VERSION} --region=us-gov-west-1
                 '''
             }
         }
