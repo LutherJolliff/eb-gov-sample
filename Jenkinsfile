@@ -74,7 +74,7 @@ pipeline {
         }
         stage('dev-deploy') {
             when {
-                branch 'main'
+                branch 'windows'
             }
             agent {
                 docker {
