@@ -94,7 +94,7 @@ pipeline {
                     docker run --rm -v ~/.aws:/root/.aws -v $(pwd):/aws amazon/aws-cli:2.0.6 s3 cp ./${BUILD_TAG}.zip s3://$ARTIFACT_BUCKET/$TF_VAR_eb_app_name/
                     docker run --rm -v ~/.aws:/root/.aws -v $(pwd):/aws amazon/aws-cli:2.0.6 elasticbeanstalk create-application-version --application-name $TF_VAR_eb_app_name --version-label v${BUILD_NUMBER}_${VERSION} --description="Built by Jenkins job $JOB_NAME" --source-bundle S3Bucket="$ARTIFACT_BUCKET",S3Key="$TF_VAR_eb_app_name/${BUILD_TAG}.zip" --region=us-gov-west-1
                     sleep 2
-                    docker run --rm -v ~/.aws:/root/.aws -v $(pwd):/aws amazon/aws-cli:2.0.6 elasticbeanstalk update-environment --application-name $TF_VAR_eb_app_name --environment-name development --version-label v${BUILD_NUMBER}_${VERSION} --region=us-gov-west-1
+                    docker run --rm -v ~/.aws:/root/.aws -v $(pwd):/aws amazon/aws-cli:2.0.6 elasticbeanstalk update-environment --application-name $TF_VAR_eb_app_name --environment-name ${TF_VAR_eb_app_name}-development --version-label v${BUILD_NUMBER}_${VERSION} --region=us-gov-west-1
                 '''
             }
         }
