@@ -88,7 +88,7 @@ pipeline {
                 sh '''
                     VERSION=$( date '+%F_%H:%M:%S' )
                     docker run --rm -v $(pwd):/app -w /app mcr.microsoft.com/dotnet/sdk:5.0 dotnet publish -o site
-                    zip -r site.zip site/*
+                    cd site && zip ../site.zip *  && cd ../
                     zip ${BUILD_TAG}.zip site.zip aws-windows-deployment-manifest.json
                     ls -la
                     docker run --rm -v ~/.aws:/root/.aws -v $(pwd):/aws amazon/aws-cli:2.0.6 s3 cp ./${BUILD_TAG}.zip s3://$ARTIFACT_BUCKET/$TF_VAR_eb_app_name/
