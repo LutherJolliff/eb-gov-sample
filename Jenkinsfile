@@ -2,7 +2,7 @@ pipeline {
     environment {
         // AWS_ACCESS_KEY_ID     = credentials('JenkinsAWSKey')
         // AWS_SECRET_ACCESS_KEY = credentials('JenkinsAWSKeySecret')
-        TF_VAR_eb_app_name = 'eb-govcloudsample'
+        TF_VAR_eb_app_name = 'eb-govcloudsample-windows'
         TF_VAR_role_arn = credentials('tf-role-arn')
         AWS_ACCESS_KEY_ID = credentials('tf_aws_access_key_id')
         AWS_SECRET_ACCESS_KEY = credentials('tf_secret_access_key_id')
@@ -56,6 +56,7 @@ pipeline {
             when {
                 anyOf {
                     branch 'main'
+                    branch 'windows'
                 }
             }
             steps {
@@ -86,7 +87,9 @@ pipeline {
             steps {
                 sh '''
                     VERSION=$( date '+%F_%H:%M:%S' )
-                    zip -r ${BUILD_TAG}.zip .
+                    docker run --rm -v $(pwd):/app -w /app mcr.microsoft.com/dotnet/sdk:5.0 dotnet publish -o site
+                    zip -r site.zip site/*
+                    zip ${BUILD_TAG}.zip site.zip aws-windows-deployment-manifest.json
                     aws s3 cp ./$BUILD_TAG.zip s3://$ARTIFACT_BUCKET/$TF_VAR_eb_app_name/
                     aws elasticbeanstalk create-application-version --application-name $TF_VAR_eb_app_name --version-label v${BUILD_NUMBER}_${VERSION} --description="Built by Jenkins job $JOB_NAME" --source-bundle S3Bucket="$ARTIFACT_BUCKET",S3Key="$TF_VAR_eb_app_name/${BUILD_TAG}.zip" --region=us-gov-west-1
                     sleep 2
