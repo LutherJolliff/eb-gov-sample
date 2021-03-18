@@ -77,23 +77,23 @@ pipeline {
             when {
                 branch 'windows'
             }
-            agent {
-                docker {
-                    image 'cynergeconsulting/aws-cli:latest'
-                    args '-u root'
-                    alwaysPull true
-                }
-            }
+            // agent {
+            //     docker {
+            //         image 'cynergeconsulting/aws-cli:latest'
+            //         args '-u root'
+            //         alwaysPull true
+            //     }
+            // }
             steps {
                 sh '''
                     VERSION=$( date '+%F_%H:%M:%S' )
                     docker run --rm -v $(pwd):/app -w /app mcr.microsoft.com/dotnet/sdk:5.0 dotnet publish -o site
                     zip -r site.zip site/*
                     zip ${BUILD_TAG}.zip site.zip aws-windows-deployment-manifest.json
-                    aws s3 cp ./$BUILD_TAG.zip s3://$ARTIFACT_BUCKET/$TF_VAR_eb_app_name/
-                    aws elasticbeanstalk create-application-version --application-name $TF_VAR_eb_app_name --version-label v${BUILD_NUMBER}_${VERSION} --description="Built by Jenkins job $JOB_NAME" --source-bundle S3Bucket="$ARTIFACT_BUCKET",S3Key="$TF_VAR_eb_app_name/${BUILD_TAG}.zip" --region=us-gov-west-1
+                    docker run --rm amazon/aws-cli:2.0.6 s3 cp ./$BUILD_TAG.zip s3://$ARTIFACT_BUCKET/$TF_VAR_eb_app_name/
+                    docker run --rm amazon/aws-cli:2.0.6 elasticbeanstalk create-application-version --application-name $TF_VAR_eb_app_name --version-label v${BUILD_NUMBER}_${VERSION} --description="Built by Jenkins job $JOB_NAME" --source-bundle S3Bucket="$ARTIFACT_BUCKET",S3Key="$TF_VAR_eb_app_name/${BUILD_TAG}.zip" --region=us-gov-west-1
                     sleep 2
-                    aws elasticbeanstalk update-environment --application-name $TF_VAR_eb_app_name --environment-name development --version-label v${BUILD_NUMBER}_${VERSION} --region=us-gov-west-1
+                    docker run --rm amazon/aws-cli:2.0.6 elasticbeanstalk update-environment --application-name $TF_VAR_eb_app_name --environment-name development --version-label v${BUILD_NUMBER}_${VERSION} --region=us-gov-west-1
                 '''
             }
         }
