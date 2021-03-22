@@ -7,6 +7,8 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('tf_aws_access_key_id')
         AWS_SECRET_ACCESS_KEY = credentials('tf_secret_access_key_id')
         ARTIFACT_BUCKET = 'elasticbeanstalk-us-gov-west-1-851887862617'
+        CURRENTBUILD_DISPLAYNAME = "Deployment Demo"
+        CURRENT_BUILDDESCRIPTION = "Deployment Demo"
     }
 
     // agent {
@@ -21,6 +23,16 @@ pipeline {
         }
     }
 
+    stage('checkout-code') {
+       steps {
+            script {
+                currentBuild.displayName = "${env.CURRENTBUILD_DISPLAYNAME}"
+                currentBuild.description = "${env.CURRENT_BUILDDESCRIPTION}"
+   
+                CHECKOUT_STATUS= 'Success'
+            }
+	    }
+    }
     stages {
         stage('dependencies') {
             steps {
@@ -29,12 +41,56 @@ pipeline {
                 // sh 'npm ci'
             }
         }
-        stage('test') {
+    stage('owasp-dependency-check') {
+       steps {
+            script {
+                echo 'Testing OWASP...'
+    
+                CHECKOUT_STATUS= 'Success'
+            }
+       }
+	}
+    stage('run tests') {
+      parallel {
+
+        stage('run-unit-tests'){
             steps {
-                echo 'Testing...'
-                // sh 'npm test'
+                script {
+                    sh 'pwd'
+
+                    RUN_UNIT_TESTS_STATUS= 'Success'
+                }
             }
         }
+        stage('run-lint'){
+            steps {
+                script {
+                    sh 'pwd'
+
+                    RUN_UNIT_TESTS_STATUS= 'Success'
+                }
+            }
+        }
+        stage('run-sonarqube'){
+            steps {
+                script {
+                    sh 'pwd'
+
+                    RUN_UNIT_TESTS_STATUS= 'Success'
+                }
+            }
+        }
+        stage('run-pa11y'){
+            steps {
+                script {
+                    sh 'pwd'
+
+                    RUN_UNIT_TESTS_STATUS= 'Success'
+                }
+            }
+        }
+    }
+    }
         // stage('Build') {
         //     steps {
         //         script {
