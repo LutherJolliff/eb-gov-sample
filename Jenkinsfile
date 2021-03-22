@@ -4,6 +4,7 @@ pipeline {
         // AWS_SECRET_ACCESS_KEY = credentials('JenkinsAWSKeySecret')
         TF_VAR_eb_app_name = 'eb-govcloudsample-windows'
         TF_VAR_role_arn = credentials('tf-role-arn')
+        TF_VAR_ami_id = 'ami-039e0ba094198aede'
         AWS_ACCESS_KEY_ID = credentials('tf_aws_access_key_id')
         AWS_SECRET_ACCESS_KEY = credentials('tf_secret_access_key_id')
         ARTIFACT_BUCKET = 'elasticbeanstalk-us-gov-west-1-851887862617'
