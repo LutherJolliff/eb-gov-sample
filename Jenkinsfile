@@ -23,17 +23,17 @@ pipeline {
         }
     }
 
-    stage('checkout-code') {
-       steps {
-            script {
-                currentBuild.displayName = "${env.CURRENTBUILD_DISPLAYNAME}"
-                currentBuild.description = "${env.CURRENT_BUILDDESCRIPTION}"
-   
-                CHECKOUT_STATUS= 'Success'
-            }
-	    }
-    }
     stages {
+        stage('checkout-code') {
+            steps {
+                    script {
+                        currentBuild.displayName = "${env.CURRENTBUILD_DISPLAYNAME}"
+                        currentBuild.description = "${env.CURRENT_BUILDDESCRIPTION}"
+        
+                        CHECKOUT_STATUS= 'Success'
+                    }
+                }
+            }
         stage('dependencies') {
             steps {
                 sh 'whoami'
