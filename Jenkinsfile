@@ -87,6 +87,9 @@ pipeline {
             steps {
                 sh '''
                     VERSION=$( date '+%F_%H:%M:%S' )
+                    whoami
+                    which docker
+                    systemctl status docker
                     docker run --rm -v $(pwd):/app -w /app mcr.microsoft.com/dotnet/sdk:5.0 dotnet publish -o site
                     cd site && zip ../site.zip *  && cd ../
                     zip ${BUILD_TAG}.zip site.zip aws-windows-deployment-manifest.json
