@@ -11,12 +11,6 @@ pipeline {
         CURRENT_BUILDDESCRIPTION = "Deployment Demo"
     }
 
-    // agent {
-    //     docker {
-    //         image 'luther007/cynerge_images:latest'
-    //         args '-u root'
-    //     }
-    // }
     agent {
         node {
             label 'master'
@@ -38,7 +32,6 @@ pipeline {
             steps {
                 sh 'whoami'
                 echo 'Installing...'
-                // sh 'npm ci'
             }
         }
     stage('owasp-dependency-check') {
@@ -91,13 +84,6 @@ pipeline {
         }
     }
     }
-        // stage('Build') {
-        //     steps {
-        //         script {
-        //             dockerImage = docker.build registry + ":$BUILD_NUMBER"
-        //         }
-        //     }
-        // }
         stage('clone-iaas-repo') {
             steps {
                 sh 'rm terraform -rf; mkdir terraform'
