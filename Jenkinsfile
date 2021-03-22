@@ -7,8 +7,8 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('tf_aws_access_key_id')
         AWS_SECRET_ACCESS_KEY = credentials('tf_secret_access_key_id')
         ARTIFACT_BUCKET = 'elasticbeanstalk-us-gov-west-1-851887862617'
-        CURRENTBUILD_DISPLAYNAME = "Deployment Demo"
-        CURRENT_BUILDDESCRIPTION = "Deployment Demo"
+        CURRENTBUILD_DISPLAYNAME = "Deployment Demo #$BUILD_NUMBER"
+        CURRENT_BUILDDESCRIPTION = "Deployment Demo #$BUILD_NUMBER"
     }
 
     agent {
