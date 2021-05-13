@@ -5,7 +5,7 @@
         {
             "name": "test-dotnet-core",
             "parameters": {
-                "appBundle": "bundle.zip",
+                "appBundle": "site.zip",
                 "iisPath": "/",
                 "iisWebSite": "Default Web Site"
             }
